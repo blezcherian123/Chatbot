@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Customer Service Agent</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
+        .chatbox { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .messages { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; margin-bottom: 10px; }
+        .input { width: 100%; padding: 10px; }
+        .btn { padding: 10px 20px; }
+    </style>
+</head>
+<body>
+    <div class="chatbox">
+        <h2>AI Customer Service</h2>
+        <div class="messages" id="chatLog"></div>
+        <form id="chatForm">
+            <input type="text" id="userInput" class="input" placeholder="Type your message..." required>
+            <button type="submit" class="btn">Send</button>
+        </form>
+    </div>
+    <script>
+        const form = document.getElementById("chatForm");
+        const input = document.getElementById("userInput");
+        const chatLog = document.getElementById("chatLog");
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const msg = input.value;
+            chatLog.innerHTML += "<div><b>You:</b> " + msg + "</div>";
+            input.value = "";
+            const res = await fetch("/get", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: "msg=" + encodeURIComponent(msg)
+            });
+            const text = await res.text();
+            chatLog.innerHTML += "<div><b>Bot:</b> " + text + "</div>";
+            chatLog.scrollTop = chatLog.scrollHeight;
+        };
+    </script>
+</body>
+</html>
